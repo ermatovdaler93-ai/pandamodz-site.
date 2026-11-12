@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Panda Modz</title>
+<style>
+:root{--bg:#f4f6f1;--card:#fff;--ink:#14181a;--mute:#6b7570;--line:#dfe5da;--acc:#2f9e5b;--acc2:#1f7a43;--err:#d64545;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c1210;--card:#141c18;--ink:#eef3ef;--mute:#8fa097;--line:#233029;--acc:#3ddc84;--acc2:#2bb56a}}
+:root[data-theme="dark"]{--bg:#0c1210;--card:#141c18;--ink:#eef3ef;--mute:#8fa097;--line:#233029;--acc:#3ddc84;--acc2:#2bb56a}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+background-image:radial-gradient(circle at 15% 10%,color-mix(in srgb,var(--acc) 18%,transparent),transparent 40%),radial-gradient(circle at 85% 90%,color-mix(in srgb,var(--acc) 12%,transparent),transparent 40%)}
+.card{width:100%;max-width:400px;background:var(--card);border:1px solid var(--line);border-radius:28px;padding:32px 26px 26px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.12);position:relative}
+.lang{position:absolute;top:16px;right:16px;display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{border:0;background:none;color:var(--mute);font:600 12px inherit;padding:6px 11px;cursor:pointer}
+.lang button.on{background:var(--acc);color:#fff}
+.logo{width:96px;height:96px;margin:6px auto 14px}
+h1{margin:0;font-size:30px;letter-spacing:-.5px}
+h1 span{color:var(--acc)}
+.tag{margin:6px 0 20px;color:var(--mute);font-size:15px}
+.badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--acc2);background:color-mix(in srgb,var(--acc) 14%,transparent);padding:5px 12px;border-radius:999px;margin-bottom:18px}
+label{display:block;text-align:left;font-size:12px;color:var(--mute);margin:0 0 6px 4px}
+input{width:100%;padding:15px 16px;border-radius:14px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:600 16px ui-monospace,Menlo,monospace;letter-spacing:1px;outline:none;transition:.2s}
+input:focus{border-color:var(--acc)}
+.btn{width:100%;margin-top:12px;padding:15px;border:0;border-radius:14px;background:var(--acc);color:#fff;font:700 15px inherit;letter-spacing:1px;cursor:pointer;transition:.2s}
+.btn:hover{background:var(--acc2)}
+.btn:disabled{opacity:.6;cursor:wait}
+.msg{min-height:20px;margin:12px 0 0;font-size:13px}
+.msg.err{color:var(--err)}.msg.ok{color:var(--acc)}
+.note{font-size:12px;color:var(--mute);margin:6px 0 16px}
+.tg{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border:1.5px solid var(--line);border-radius:14px;color:var(--ink);text-decoration:none;font-weight:600;font-size:14px}
+.tg:hover{border-color:var(--acc)}
+.foot{margin-top:18px;font-size:12px;color:var(--mute)}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="lang"><button id="ru" class="on">RU</button><button id="en">EN</button></div>
+  <svg class="logo" viewBox="0 0 100 100" aria-label="Panda">
+    <circle cx="22" cy="24" r="14" fill="#14181a"/><circle cx="78" cy="24" r="14" fill="#14181a"/>
+    <circle cx="50" cy="55" r="38" fill="#fff" stroke="#14181a" stroke-width="3"/>
+    <ellipse cx="34" cy="50" rx="10" ry="13" fill="#14181a" transform="rotate(-20 34 50)"/>
+    <ellipse cx="66" cy="50" rx="10" ry="13" fill="#14181a" transform="rotate(20 66 50)"/>
+    <circle cx="35" cy="49" r="3.5" fill="#fff"/><circle cx="65" cy="49" r="3.5" fill="#fff"/>
+    <ellipse cx="50" cy="64" rx="5" ry="3.5" fill="#14181a"/>
+    <path d="M43 71q7 6 14 0" stroke="#14181a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  </svg>
+  <h1>Panda <span>Modz</span></h1>
+  <p class="tag" data-k="tag"></p>
+  <div class="badge" data-k="badge"></div>
+  <label for="key" data-k="label"></label>
+  <input id="key" autocomplete="off" spellcheck="false" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19">
+  <button class="btn" id="go" data-k="btn"></button>
+  <p class="msg" id="msg"></p>
+  <p class="note" data-k="note"></p>
+  <a class="tg" href="https://t.me/PANDA_M0DZ" target="_blank" rel="noopener">✈ <span data-k="tg"></span></a>
+  <div class="foot">Panda Modz © 2026</div>
+</main>
+<script>
+// Укажите адрес вашего сервера проверки ключей (POST {key}) → {ok:true|false, message}
+const CONFIG={apiUrl:""};
+const T={
+ ru:{tag:"Твой доступ. Твой сервер.",badge:"ОФИЦИАЛЬНЫЙ ДОСТУП",label:"Ключ активации для этого устройства",btn:"АКТИВИРОВАТЬ",note:"Срок действия и лимит устройств указаны в ключе.",tg:"Panda Modz · Получить ключ",empty:"Введите ключ активации",bad:"Неверный формат ключа",wait:"Проверка…",ok:"Ключ принят",nosrv:"Сервер активации не подключён",fail:"Ошибка соединения"},
+ en:{tag:"Your access. Your server.",badge:"OFFICIAL ACCESS",label:"Activation key for this device",btn:"ACTIVATE",note:"Expiry and device limit are set in the key.",tg:"Panda Modz · Get key",empty:"Enter your activation key",bad:"Invalid key format",wait:"Checking…",ok:"Key accepted",nosrv:"Activation server is not connected",fail:"Connection error"}
+};
+let L="ru";
+const $=s=>document.querySelector(s),msg=$("#msg");
+function setLang(l){L=l;document.documentElement.lang=l;
+ document.querySelectorAll("[data-k]").forEach(e=>e.textContent=T[l][e.dataset.k]);
+ $("#ru").classList.toggle("on",l==="ru");$("#en").classList.toggle("on",l==="en");
+ try{localStorage.setItem("pm-lang",l)}catch(e){}}
+$("#ru").onclick=()=>setLang("ru");$("#en").onclick=()=>setLang("en");
+let saved="ru";try{saved=localStorage.getItem("pm-lang")||"ru"}catch(e){}
+setLang(saved);
+$("#key").addEventListener("input",e=>{
+ const v=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,16);
+ e.target.value=v.replace(/(.{4})(?=.)/g,"$1-");});
+function say(t,c){msg.textContent=t;msg.className="msg "+(c||"")}
+$("#go").onclick=async()=>{
+ const k=$("#key").value.trim();
+ if(!k)return say(T[L].empty,"err");
+ if(k.length<19)return say(T[L].bad,"err");
+ if(!CONFIG.apiUrl)return say(T[L].nosrv,"err");
+ const b=$("#go");b.disabled=true;say(T[L].wait);
+ try{
+  const r=await fetch(CONFIG.apiUrl,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({key:k})});
+  const d=await r.json();
+  say(d.message||(d.ok?T[L].ok:T[L].bad),d.ok?"ok":"err");
+ }catch(e){say(T[L].fail,"err")}
+ b.disabled=false;
+};
+</script>
+</body>
+</html>
